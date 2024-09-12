@@ -1,5 +1,5 @@
 import './style.css'
-import { Client, Databases } from 'appwrite';
+import { Client, Databases, ID } from 'appwrite';
 
 const client = new Client();
 const database_ID='66e2c39a00318bd05fa7'
@@ -14,6 +14,9 @@ client
 const db=new Databases(client)
 
 const taskList= document.getElementById('tasks-list')
+const form=document.getElementById('form')
+
+form.addEventListener('submit',addTask)
 
 async function getTasks(){
   const response= await db.listDocuments(
@@ -38,4 +41,26 @@ function renderToDom(task){
                       </div>`
 
   taskList.insertAdjacentHTML('afterbegin',taskWrapper)
+}
+
+
+async function addTask(e ){
+  e.preventDefault()
+
+  const taskBody=e.target.body.value
+
+  if(taskBody==''){
+    alert('Field cannot be empty!')
+    return
+  }
+
+  const response=await db.createDocument(
+    database_ID,
+    collection_tasks_ID,
+    ID.unique(),
+    {'body':taskBody}
+  )
+  
+  renderToDom(response)
+  form.reset()
 }
