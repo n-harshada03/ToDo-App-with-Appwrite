@@ -13,6 +13,8 @@ client
 
 const db=new Databases(client)
 
+const taskList= document.getElementById('tasks-list')
+
 async function getTasks(){
   const response= await db.listDocuments(
     database_ID,
@@ -20,6 +22,20 @@ async function getTasks(){
   )
 
   console.log(response)
+
+  for(let i=0;i< response.documents.length;i++){
+    renderToDom(response.documents[i])
+  }
 }
 
 getTasks()
+
+function renderToDom(task){
+
+  const taskWrapper= `<div class="task-wrapper" id="task-${task.$id}}"> 
+                          <p class="complete-${task.completed}">${task.body}</p>
+                          <strong class="delete" id="delete-${task.$id}">X</strong> 
+                      </div>`
+
+  taskList.insertAdjacentHTML('afterbegin',taskWrapper)
+}
